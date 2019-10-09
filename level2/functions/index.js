@@ -13,8 +13,9 @@
 
 'use strict';
 
-// Import the Dialogflow module from the Actions on Google client library.
-const {dialogflow} = require('actions-on-google');
+// Import the Dialogflow module and response creation dependencies from the
+// Actions on Google client library.
+const {dialogflow, Permission, Suggestions} = require('actions-on-google');
 
 // Import the firebase-functions package for deployment.
 const functions = require('firebase-functions');
@@ -28,6 +29,14 @@ app.intent('favorite color', (conv, {color}) => {
     const luckyNumber = color.length;
     // Respond with the user's lucky number and end the conversation.
     conv.close('Your lucky number is ' + luckyNumber);
+});
+
+// Handle the Dialogflow intent named 'Default Welcome Intent'.
+app.intent('Default Welcome Intent', (conv) => {
+    conv.ask(new Permission({
+        context: 'Hi there, to get to know you better',
+        permissions: 'NAME',
+    }));
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
