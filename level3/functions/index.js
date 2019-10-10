@@ -171,11 +171,24 @@ app.intent('actions_intent_NO_INPUT', (conv) => {
 app.intent('favorite fake color', (conv, {fakeColor}) => {
     fakeColor = conv.arguments.get('OPTION') || fakeColor;
     // Present user with the corresponding basic card and end the conversation.
-    conv.close(`Here's the color`, new BasicCard(colorMap[fakeColor]));
     if (!conv.screen) {
         conv.ask(colorMap[fakeColor].text);
+    } else {
+        conv.ask(`Here you go.`, new BasicCard(colorMap[fakeColor]));
+    }
+    conv.ask('Do you want to hear about another fake color?');
+    conv.ask(new Suggestions('Yes', 'No'));
+});
+
+app.intent('favorite fake color - yes', (conv) => {
+    conv.ask('Which color, indigo taco, pink unicorn or blue grey coffee?');
+    // If the user is using a screened device, display the carousel
+    if (conv.screen) {
+        return conv.ask(fakeColorCarousel());
     }
 });
+
+// app.intent('favorite fake color - no', DialogFlow)
 
 // app.intent('actions_intent_CANCEL', DialogFlow)
 
