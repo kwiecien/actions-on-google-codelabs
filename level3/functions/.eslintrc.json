@@ -3,7 +3,15 @@
     "ecmaVersion": 7,
     "sourceType": "script"
   },
-  "extends": ["google"],
+  "extends": "google",
+  "rules": {
+    "max-len": [
+      "warn",
+      {
+        "code": 120
+      }
+    ]
+  },
   "env": {
     "node": true
   }
