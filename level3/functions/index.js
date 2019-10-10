@@ -110,6 +110,20 @@ app.intent('favorite color', (conv, {color}) => {
     }
 });
 
+// Handle the Dialogflow NO_INPUT intent.
+// Triggered when the user doesn't provide input to the Action
+app.intent('actions_intent_NO_INPUT', (conv) => {
+    // Use the number of reprompts to vary response
+    const repromptCount = parseInt(conv.arguments.get('REPROMPT_COUNT'));
+    if (repromptCount === 0) {
+        conv.ask(`Which color would you like to hear about?`);
+    } else if (repromptCount === 1) {
+        conv.ask(`Please say the name of a color.`);
+    } else if (conv.arguments.get('IS_FINAL_REPROMPT')) {
+        conv.close(`Sorry, we're having trouble. Let's try this later. Goodbye`);
+    }
+});
+
 // Handle the Dialogflow intent named 'favorite fake color'.
 // The intent collects a parameter named 'fakeColor'.
 app.intent('favorite fake color', (conv, {fakeColor}) => {
