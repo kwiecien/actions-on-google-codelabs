@@ -20,6 +20,8 @@ const {
     BasicCard,
     Permission,
     Suggestions,
+    Carousel,
+    Image,
 } = require('actions-on-google');
 
 // Import the firebase-functions package for deployment.
@@ -57,6 +59,37 @@ const colorMap = {
         },
         display: 'WHITE',
     },
+};
+
+const fakeColorCarousel = () => {
+    return new Carousel({
+        items: {
+            'indigo taco': {
+                title: 'Indigo Taco',
+                synonyms: ['indigo', 'taco'],
+                image: new Image({
+                    url: 'https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDN1JRbF9ZMHZsa1k/style-color-uiapplication-palette1.png',
+                    alt: 'Indigo Taco Color',
+                }),
+            },
+            'pink unicorn': {
+                title: 'Pink Unicorn',
+                synonyms: ['pink', 'unicorn'],
+                image: new Image({
+                    url: 'https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDbFVfTXpoaEE5Vzg/style-color-uiapplication-palette2.png',
+                    alt: 'Pink Unicorn Color',
+                }),
+            },
+            'blue grey coffee': {
+                title: 'Blue Grey Coffee',
+                synonyms: ['blue', 'grey', 'coffee'],
+                image: new Image({
+                    url: 'https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDZUdpeURtaTUwLUk/style-color-colorsystem-gray-secondary-161116.png',
+                    alt: 'Blue Grey Coffee Color',
+                }),
+            },
+        },
+    });
 };
 
 // Handle the Dialogflow intent named 'Default Welcome Intent'.
@@ -110,6 +143,15 @@ app.intent('favorite color', (conv, {color}) => {
     }
 });
 
+// Handle the Dialogflow intent named 'favorite color - yes'
+app.intent('favorite color - yes', (conv) => {
+    conv.ask('Which color, indigo taco, pink unicorn or blue grey coffee?');
+    // If the user is using a screened device, display the carousel
+    if (conv.screen) {
+        return conv.ask(fakeColorCarousel());
+    }
+});
+
 // Handle the Dialogflow NO_INPUT intent.
 // Triggered when the user doesn't provide input to the Action
 app.intent('actions_intent_NO_INPUT', (conv) => {
@@ -127,8 +169,12 @@ app.intent('actions_intent_NO_INPUT', (conv) => {
 // Handle the Dialogflow intent named 'favorite fake color'.
 // The intent collects a parameter named 'fakeColor'.
 app.intent('favorite fake color', (conv, {fakeColor}) => {
+    fakeColor = conv.arguments.get('OPTION') || fakeColor;
     // Present user with the corresponding basic card and end the conversation.
     conv.close(`Here's the color`, new BasicCard(colorMap[fakeColor]));
+    if (!conv.screen) {
+        conv.ask(colorMap[fakeColor].text);
+    }
 });
 
 // app.intent('actions_intent_CANCEL', DialogFlow)
