@@ -131,5 +131,7 @@ app.intent('favorite fake color', (conv, {fakeColor}) => {
     conv.close(`Here's the color`, new BasicCard(colorMap[fakeColor]));
 });
 
+// app.intent('actions_intent_CANCEL', DialogFlow)
+
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
